@@ -1,4 +1,4 @@
-CFLAGS=-Weverything -g
+CFLAGS=-std=c1x -Wall -g
 
 all: osp_network
 
