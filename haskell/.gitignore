@@ -1,0 +1,4 @@
+*.hi
+*.o
+OspStructs
+OspStructs.hs

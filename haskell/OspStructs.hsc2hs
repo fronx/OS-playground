@@ -1,0 +1,30 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
+module OspStructs where
+
+import Foreign
+import Foreign.C.Types
+
+#include "../c/osp_structs.h"
+
+-- example from: http://therning.org/magnus/archives/315
+
+data Bar = Bar { a :: Int, b :: Int }
+type BarPtr = Ptr (Bar)
+
+instance Storable Bar where
+  sizeOf _ = #{size Foo}
+  alignment _ = alignment (undefined :: CInt)
+  peek ptr = do
+    a' <- #{peek Foo, a} ptr
+    b' <- #{peek Foo, b} ptr
+    return Bar { a=a', b=b' }
+  poke ptr (Bar a' b') = do
+    (#poke Foo, a) ptr a'
+    (#poke Foo, b) ptr b'
+
+foreign import ccall "../c/osp_structs.h print_foo"
+  c_print_foo :: BarPtr -> IO ()
+
+printFoo b = with b c_print_foo
+
+main = printFoo $ Bar { a=17, b=47 }
